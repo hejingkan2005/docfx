@@ -72,3 +72,5 @@ For more information see the [.NET Foundation Code of Conduct](http://www.dotnet
 | Windows with VS2017 | Ubuntu Linux with Mono
 | ------------- |----------
 | [![VS](https://docascode.visualstudio.com/_apis/public/build/definitions/c8f1f4cb-74cb-4c89-a2db-6c3438796b0a/2/badge)](https://docascode.visualstudio.com/docfx/_build/index?context=mine&path=%5C&definitionId=2&_a=completed)|[![Ubuntu](https://travis-ci.org/docascode/docfx.test.svg?branch=master)](https://travis-ci.org/docascode/docfx.test)
+
+### Test
