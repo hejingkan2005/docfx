@@ -1,0 +1,35 @@
+name: Release
+on:
+  push:
+    branches: [ v3-release, test ]
+jobs:
+  test:
+    name: Test
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-dotnet@v1
+    - run: dotnet test -c Release
+    - name: Build and Test
+      shell: pwsh
+      run: ./build.ps1
+      id: build-binaries
+    - name: Set up nuget
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: "${{ secrets.AZURE_DEVOPS_FEED_TOKEN }}"
+        nuget-version: '5.x'
+    - name: Publish nuget package
+      run: nuget push drop/**/*.nupkg -Source https://docfx.pkgs.visualstudio.com/docfx/_packaging/docs-public-packages/nuget/v3/index.json
+    - name: Create GtiHub release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: ${{ steps.build-binaries.outputs.PACKAGE_VERSION }}
+        title: Release ${{ steps.build-binaries.outputs.PACKAGE_VERSION }}
+        prerelease: true
+        files: |
+          drop/docfx-bin/staging/**/*
+

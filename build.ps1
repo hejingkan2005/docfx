@@ -26,6 +26,7 @@ function publishBinaryPackages() {
         if ($rid -eq "win7-x64") {
             $version = Invoke-Expression "$packagesBasePath/win7-x64/docfx.exe --version"
             Write-Host "package version: $version"
+            Write-Host "::set-output name=PACKAGE_VERSION::$version"
         }
         $packageName = "docfx-$rid-$version"
         Compress-Archive -Path "$packagesBasePath/$rid/*" -DestinationPath "$stagingPath/$packageName.zip" -Update
