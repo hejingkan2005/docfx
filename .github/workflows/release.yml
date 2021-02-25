@@ -4,31 +4,41 @@ on:
     branches: [ v3-release, release-action ]
 jobs:
   test:
-    name: Test
+    name: Build and Test
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
     - uses: actions/setup-dotnet@v1
-    - run: dotnet test -c Release
-    - name: Build and Test
+    - name: Build
       shell: pwsh
       run: ./build.ps1
       id: build-binaries
+    - name: Test
+      run: dotnet test -c Release
+
+  nuget-package-release:
+    name: Nuget package release
+    runs-on: windows-latest
+    steps:
     - name: Set up nuget
       uses: nuget/setup-nuget@v1
       with:
-        nuget-api-key: "${{ secrets.AZURE_DEVOPS_FEED_TOKEN }}"
         nuget-version: '5.x'
     - name: Publish nuget package
       run: nuget push drop/**/*.nupkg -Source https://docfx.pkgs.visualstudio.com/docfx/_packaging/docs-public-packages/nuget/v3/index.json -ApiKey "${{ secrets.AZURE_DEVOPS_FEED_TOKEN }}"
+
+  github-release:
+    name: GitHub release
+    runs-on: windows-latest
+    steps:
     - name: Create GtiHub release
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: ${{ steps.build-binaries.outputs.PACKAGE_VERSION }}
-        title: Release ${{ steps.build-binaries.outputs.PACKAGE_VERSION }}
+        automatic_release_tag: ${{ GitAssemblyInformationalVersion }}
+        title: Release ${{ GitAssemblyInformationalVersion }}
         prerelease: true
         files: |
           drop/docfx-bin/staging/**/*
