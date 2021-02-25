@@ -17,24 +17,12 @@ jobs:
       id: build-binaries
     - name: Test
       run: dotnet test -c Release
-
-  nuget-package-release:
-    needs: build
-    name: Nuget package release
-    runs-on: windows-latest
-    steps:
     - name: Set up nuget
       uses: nuget/setup-nuget@v1
       with:
         nuget-version: '5.x'
     - name: Publish nuget package
       run: nuget push drop/**/*.nupkg -Source https://docfx.pkgs.visualstudio.com/docfx/_packaging/docs-public-packages/nuget/v3/index.json -ApiKey "${{ secrets.AZURE_DEVOPS_FEED_TOKEN }}"
-
-  github-release:
-    name: GitHub release
-    needs: build
-    runs-on: windows-latest
-    steps:
     - name: Create GtiHub release
       uses: marvinpinto/action-automatic-releases@latest
       with:
