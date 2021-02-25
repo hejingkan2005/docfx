@@ -3,7 +3,7 @@ on:
   push:
     branches: [ v3-release, release-action ]
 jobs:
-  test:
+  build:
     name: Build and Test
     runs-on: windows-latest
     steps:
@@ -19,6 +19,7 @@ jobs:
       run: dotnet test -c Release
 
   nuget-package-release:
+    needs: build
     name: Nuget package release
     runs-on: windows-latest
     steps:
@@ -31,6 +32,7 @@ jobs:
 
   github-release:
     name: GitHub release
+    needs: build
     runs-on: windows-latest
     steps:
     - name: Create GtiHub release
