@@ -1,7 +1,7 @@
 name: Release
 on:
   push:
-    branches: [ v3-release, test ]
+    branches: [ v3-release, release-action ]
 jobs:
   test:
     name: Test
@@ -22,7 +22,7 @@ jobs:
         nuget-api-key: "${{ secrets.AZURE_DEVOPS_FEED_TOKEN }}"
         nuget-version: '5.x'
     - name: Publish nuget package
-      run: nuget push drop/**/*.nupkg -Source https://docfx.pkgs.visualstudio.com/docfx/_packaging/docs-public-packages/nuget/v3/index.json
+      run: nuget push drop/**/*.nupkg -Source https://docfx.pkgs.visualstudio.com/docfx/_packaging/docs-public-packages/nuget/v3/index.json -ApiKey "${{ secrets.AZURE_DEVOPS_FEED_TOKEN }}"
     - name: Create GtiHub release
       uses: marvinpinto/action-automatic-releases@latest
       with:
